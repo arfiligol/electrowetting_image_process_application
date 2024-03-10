@@ -1,0 +1,12 @@
+ksize = 19
+
+Lower H 16
+Upper H 70
+Lower S 0
+Upper S 255
+Lower V 0
+Upper V 115
+
+Threshold1 50
+Threshold2 150
+Minimum Contour Area 0

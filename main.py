@@ -3,7 +3,7 @@ import ttkbootstrap as ttkb
 from ttkbootstrap.constants import *
 
 from image_processor import ImageProcessor
-from frames import BaseFrame, ScrollableFrame, OriginImageFrame, GaussianBlurFrame, HSVFrame, HSVThresholdFrame, CannyEdgeDetectionFrame
+from frames import BaseFrame, ScrollableFrame, OriginImageFrame, GaussianBlurFrame, HSVFrame, HSVThresholdFrame, EdgeDetectionFrame
 
 class ImageProcessingApp:
     """ 主應用程序 App """
@@ -39,7 +39,7 @@ class ImageProcessingApp:
         self.hsvThresholdFrame: HSVThresholdFrame = HSVThresholdFrame(self.scroll_frame.scrollable_frame, self.processor)
         self.hsvThresholdFrame.grid(row = 1, column = 0, padx=10, pady=10, sticky="nsew")
 
-        self.cannyEdgeDetectionFrame: CannyEdgeDetectionFrame = CannyEdgeDetectionFrame(self.scroll_frame.scrollable_frame, self.processor)
+        self.cannyEdgeDetectionFrame: EdgeDetectionFrame = EdgeDetectionFrame(self.scroll_frame.scrollable_frame, self.processor)
         self.cannyEdgeDetectionFrame.grid(row=1, column=1, padx=10, pady=10, sticky="nsew")
 
         # 註冊 Frame 到 BaseFrame
