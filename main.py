@@ -3,7 +3,7 @@ import ttkbootstrap as ttkb
 from ttkbootstrap.constants import *
 
 from image_processor import ImageProcessor
-from frames import OriginImageFrame, GaussianBlurFrame, HSVFrame, HSVThresholdFrame, CannyEdgeDetectionFrame
+from frames import ScrollableFrame, OriginImageFrame, GaussianBlurFrame, HSVFrame, HSVThresholdFrame, CannyEdgeDetectionFrame
 
 class ImageProcessingApp:
     """ 主應用程序 App """
@@ -22,20 +22,24 @@ class ImageProcessingApp:
         for i in range(2):
             self.window.rowconfigure(i, weight = 1)
 
+        # 創建一個可滾動的 Frame 來包裹其他 Frame
+        self.scroll_frame = ScrollableFrame(self.window)
+        self.scroll_frame.pack(fill="both", expand=True)
+
         # 創建每個處理步驟的 Frame
-        self.originFrame: OriginImageFrame = OriginImageFrame(self.window, self.processor)
+        self.originFrame: OriginImageFrame = OriginImageFrame(self.scroll_frame.scrollable_frame, self.processor)
         self.originFrame.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
 
-        self.gaussianFrame: GaussianBlurFrame = GaussianBlurFrame(self.window, self.processor)
+        self.gaussianFrame: GaussianBlurFrame = GaussianBlurFrame(self.scroll_frame.scrollable_frame, self.processor)
         self.gaussianFrame.grid(row = 0, column = 1, padx = 10, pady = 10, sticky = "nsew")
 
-        self.hsvFrame = HSVFrame(self.window, self.processor)
+        self.hsvFrame = HSVFrame(self.scroll_frame.scrollable_frame, self.processor)
         self.hsvFrame.grid(row=0, column=2, padx=10, pady=10, sticky="nsew")
 
-        self.hsvThresholdFrame: HSVThresholdFrame = HSVThresholdFrame(self.window, self.processor)
+        self.hsvThresholdFrame: HSVThresholdFrame = HSVThresholdFrame(self.scroll_frame.scrollable_frame, self.processor)
         self.hsvThresholdFrame.grid(row = 1, column = 0, padx=10, pady=10, sticky="nsew")
 
-        self.cannyEdgeDetectionFrame: CannyEdgeDetectionFrame = CannyEdgeDetectionFrame(self.window, self.processor)
+        self.cannyEdgeDetectionFrame: CannyEdgeDetectionFrame = CannyEdgeDetectionFrame(self.scroll_frame.scrollable_frame, self.processor)
         self.cannyEdgeDetectionFrame.grid(row=1, column=1, padx=10, pady=10, sticky="nsew")
 
 def main():

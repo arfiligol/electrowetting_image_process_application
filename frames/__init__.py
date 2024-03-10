@@ -1,3 +1,5 @@
+from .scrollable_frame import ScrollableFrame
+
 from .base_frame import BaseFrame
 from .origin_image_frame import OriginImageFrame
 from .gaussian_blur_frame import GaussianBlurFrame

@@ -14,6 +14,20 @@ def create_random_color_image():
 
 class BaseFrame(ttkb.Frame):
     """所有步驟Frame的基礎類別"""
+    _observers = []
+    # To store each frame create with "BaseFrame"
+    # In this application, when a slider changes its value, all of the frame have to update its image.
+    # The method we done this is using the communication method by register frames and notifying method
+    @classmethod
+    def register_observer(cls, frame_instance):
+        cls._observers.append(frame_instance)
+    
+    @classmethod
+    def notify_observers(cls):
+        for observer in cls._observers:
+            observer.update_image()
+
+
     def __init__(self, parent, title, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
         self.image_label = None # Used to show the image
