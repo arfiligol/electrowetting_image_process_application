@@ -39,7 +39,9 @@ class BaseFrame(ttkb.Frame):
 
         self.update_image(create_random_color_image())
 
-    def update_image(self, img):
+    def update_image(self, img = None):
+        if img is None:
+            img = create_random_color_image()
         """更新顯示的影像"""
         # 將 PIL 影像轉換為 Tkinter 可用的影像格式
         if (type(img) is not Image.Image):

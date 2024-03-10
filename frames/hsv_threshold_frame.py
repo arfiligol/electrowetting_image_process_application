@@ -13,8 +13,8 @@ if TYPE_CHECKING:
 class HSVThresholdFrame(BaseFrame):
     """HSV閾值化步驟的Frame"""
     def __init__(self, parent, processor: 'ImageProcessor', *args, **kwargs):
-        super().__init__(parent, "HSV Threshold", *args, **kwargs)
         self.processor = processor
+        super().__init__(parent, "HSV Threshold", *args, **kwargs)
         
         # 為HSV閾值化創建滑桿和標籤
         # Lower H
@@ -114,35 +114,42 @@ class HSVThresholdFrame(BaseFrame):
         if (self.lowerHSlider.get() >= self.upperHSlider.get()):
             self.upperHSlider.set(self.lowerHSlider.get())
         self.processor.process_image()
-        self.update_image(self.processor.mask)
+        self.notify_observers()
 
     def update_upperHSlider_value(self):
         if (self.upperHSlider.get() < self.lowerHSlider.get()):
             self.lowerHSlider.set(self.upperHSlider.get())
         self.processor.process_image()
-        self.update_image(self.processor.mask)
+        self.notify_observers()
 
     def update_lowerSSlider_value(self):
         if (self.lowerSSlider.get() >= self.upperSSlider.get()):
             self.upperSSlider.set(self.lowerSSlider.get())
         self.processor.process_image()
-        self.update_image(self.processor.mask)
+        self.notify_observers()
     
     def update_upperSSlider_value(self):
         if (self.upperSSlider.get() < self.lowerSSlider.get()):
             self.lowerSSlider.set(self.upperSSlider.get())
         self.processor.process_image()
-        self.update_image(self.processor.mask)
+        self.notify_observers()
 
     def update_lowerVSlider_value(self):
         if (self.lowerVSlider.get() >= self.upperVSlider.get()):
             self.upperVSlider.set(self.lowerVSlider.get())
         self.processor.process_image()
-        self.update_image(self.processor.mask)
+        self.notify_observers()
 
     def update_upperVSlider_value(self):
         if (self.upperVSlider.get() < self.lowerVSlider.get()):
             self.lowerVSlider.set(self.upperVSlider.get())
         self.processor.process_image()
-        self.update_image(self.processor.mask)
+        self.notify_observers()
 
+
+
+    # Override
+    def update_image(self, img = None):
+        if img is None:
+            img = self.processor.mask
+        super().update_image(img)

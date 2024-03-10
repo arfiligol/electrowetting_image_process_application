@@ -3,7 +3,7 @@ import ttkbootstrap as ttkb
 from ttkbootstrap.constants import *
 
 from image_processor import ImageProcessor
-from frames import ScrollableFrame, OriginImageFrame, GaussianBlurFrame, HSVFrame, HSVThresholdFrame, CannyEdgeDetectionFrame
+from frames import BaseFrame, ScrollableFrame, OriginImageFrame, GaussianBlurFrame, HSVFrame, HSVThresholdFrame, CannyEdgeDetectionFrame
 
 class ImageProcessingApp:
     """ 主應用程序 App """
@@ -42,11 +42,21 @@ class ImageProcessingApp:
         self.cannyEdgeDetectionFrame: CannyEdgeDetectionFrame = CannyEdgeDetectionFrame(self.scroll_frame.scrollable_frame, self.processor)
         self.cannyEdgeDetectionFrame.grid(row=1, column=1, padx=10, pady=10, sticky="nsew")
 
+        # 註冊 Frame 到 BaseFrame
+        BaseFrame.register_observer(self.originFrame)
+        BaseFrame.register_observer(self.gaussianFrame)
+        BaseFrame.register_observer(self.hsvFrame)
+        BaseFrame.register_observer(self.hsvThresholdFrame)
+        BaseFrame.register_observer(self.cannyEdgeDetectionFrame)
+
+        # 初次呼叫讓圖片初始化
+        BaseFrame.notify_observers()
+
 def main():
     window = ttkb.Window(themename="litera")
 
     # Create ImageProcessor Instance
-    image = cv2.imread("test_image.jpg")
+    image = cv2.imread("test_image2.jpg")
     processor = ImageProcessor(image)
     processor.process_image()
 

@@ -9,7 +9,10 @@ if TYPE_CHECKING:
 class OriginImageFrame(BaseFrame):
     """Origin Image's Frame"""
     def __init__(self, parent, processor: 'ImageProcessor', *args, **kwargs):
-        super().__init__(parent, "Origin Image", *args, **kwargs)
         self.processor = processor
+        super().__init__(parent, "Origin Image", *args, **kwargs)
 
-        self.update_image(cv2.cvtColor(self.processor.image, cv2.COLOR_BGR2RGB))
+    def update_image(self, img = None):
+        if img is None:
+            img = cv2.cvtColor(self.processor.image, cv2.COLOR_BGR2RGB)
+        super().update_image(img)
