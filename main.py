@@ -17,9 +17,9 @@ class ImageProcessingApp:
         self.window.title("Electrowetting Image Processing")
         self.window.geometry("1280x920")
 
-        for i in range(3):
-            self.window.columnconfigure(i, weight = 1)
         for i in range(2):
+            self.window.columnconfigure(i, weight = 1)
+        for i in range(3):
             self.window.rowconfigure(i, weight = 1)
 
         # 創建一個可滾動的 Frame 來包裹其他 Frame
@@ -34,13 +34,13 @@ class ImageProcessingApp:
         self.gaussianFrame.grid(row = 0, column = 1, padx = 10, pady = 10, sticky = "nsew")
 
         self.hsvFrame = HSVFrame(self.scroll_frame.scrollable_frame, self.processor)
-        self.hsvFrame.grid(row=0, column=2, padx=10, pady=10, sticky="nsew")
+        self.hsvFrame.grid(row=1, column=0, padx=10, pady=10, sticky="nsew")
 
         self.hsvThresholdFrame: HSVThresholdFrame = HSVThresholdFrame(self.scroll_frame.scrollable_frame, self.processor)
-        self.hsvThresholdFrame.grid(row = 1, column = 0, padx=10, pady=10, sticky="nsew")
+        self.hsvThresholdFrame.grid(row = 1, column = 1, padx=10, pady=10, sticky="nsew")
 
         self.cannyEdgeDetectionFrame: EdgeDetectionFrame = EdgeDetectionFrame(self.scroll_frame.scrollable_frame, self.processor)
-        self.cannyEdgeDetectionFrame.grid(row=1, column=1, padx=10, pady=10, sticky="nsew")
+        self.cannyEdgeDetectionFrame.grid(row=2, column=0, padx=10, pady=10, sticky="nsew")
 
         # 註冊 Frame 到 BaseFrame
         BaseFrame.register_observer(self.originFrame)

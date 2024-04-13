@@ -1,6 +1,7 @@
 import cv2
 from tkinter import IntVar, DoubleVar
 import numpy as np
+import pickle
 
 class ImageProcessor:
     def __init__(self, image):
@@ -51,8 +52,8 @@ class ImageProcessor:
         upper_bound = np.array([self.upper_h.get(), self.upper_s.get(), self.upper_v.get()], dtype=np.uint8)
         self.mask = cv2.inRange(self.hsv, lower_bound, upper_bound)
 
-    # def apply_canny_edge_detection(self):
-    #     self.edges = cv2.Canny(self.mask, self.canny_threshold1.get(), self.canny_threshold2.get())
+    def apply_canny_edge_detection(self):
+        self.edges = cv2.Canny(self.mask, self.canny_threshold1.get(), self.canny_threshold2.get())
 
     def find_and_filter_contours(self):
         contours, _ = cv2.findContours(self.mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
@@ -93,13 +94,52 @@ class ImageProcessor:
                 print("Rect: ", rect)
                 print("Box: ", box)
 
+    def fit_ellipse_and_draw_it(self):
+        if (len(self.contours) == 1):
+            print("Only one contour")
+            for cnt in self.contours:
+
+                # 獲取輪廓點的所有y值
+                y_values = [point[0][1] for point in cnt]
+
+                # 計算y值的直方圖
+                hist, bin_edges = np.histogram(y_values, bins=range(int(min(y_values)), int(max(y_values)) + 1))
+
+                # 找到最大頻率的y值，這將是最可能的平面邊緣的y值
+                c = bin_edges[np.argmax(hist)]
+                print("水平線 y 值: " + str(c))
+
+                # 將y_values序列化並存儲到檔案
+                with open('y_values_dump.pkl', 'wb') as file:
+                    pickle.dump(y_values, file)
+
+                # 繪製水平線
+                cv2.line(self.contour_img, (0, int(c)), (self.contour_img.shape[1], int(c)), (255,0,0), 2)
+
+
+                ellipse = cv2.fitEllipse(cnt)
+
+                # Extract the center, axis lengths, and rotation angle from the ellipse parameters.
+                (x0, y0), (MA, ma), angle = ellipse
+
+                # 計算接觸點
+                a = MA / 2
+                b = ma / 2
+                # contact_x1 = 
+                
+
+                # 繪製 fit 橢圓 and most point 到 contour image 上
+                cv2.ellipse(self.contour_img, ellipse, (0,0,255), 2)
+
+                
 
     def process_image(self):
         self.apply_gaussian_blur()
         self.convert_to_hsv()
         self.apply_inrange_threshold()
-        # self.apply_canny_edge_detection()
+        self.apply_canny_edge_detection()
         self.find_and_filter_contours()
         self.draw_contours()
-        self.get_information_of_contours()
+        # self.get_information_of_contours()
+        self.fit_ellipse_and_draw_it()
         return self.contour_img
