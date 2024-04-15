@@ -12,5 +12,5 @@ class HSVFrame(BaseFrame):
 
     def update_image(self, img = None):
         if img is None:
-            img = self.processor.hsv
+            img = self.processor.gray
         super().update_image(img)

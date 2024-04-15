@@ -15,35 +15,35 @@ class EdgeDetectionFrame(BaseFrame):
         self.processor = processor
         super().__init__(parent, "Edge Detection", *args, **kwargs)
 
-        # # Threshold 1
-        # threshold1_container = ttkb.Frame(self)
-        # threshold1_container.pack(fill='x', padx=10, pady=5)
+        # Threshold 1
+        threshold1_container = ttkb.Frame(self)
+        threshold1_container.pack(fill='x', padx=10, pady=5)
 
-        # ttkb.Label(threshold1_container, text='Threshold 1').pack(side="left")
-        # ttkb.Label(threshold1_container, textvariable=self.processor.canny_threshold1).pack(side="left", padx=(10, 0))
+        ttkb.Label(threshold1_container, text='Threshold 1').pack(side="left")
+        ttkb.Label(threshold1_container, textvariable=self.processor.canny_threshold1).pack(side="left", padx=(10, 0))
 
-        # self.lowThresholdSlider = IntScale(self, 
-        #                                      from_=0, 
-        #                                      to=100,
-        #                                      orient='horizontal',
-        #                                      variable=self.processor.canny_threshold1,
-        #                                      command=lambda event: self.update_slider_value())
-        # self.lowThresholdSlider.pack(fill='x', padx=10, pady=5)
+        self.lowThresholdSlider = IntScale(self, 
+                                             from_=0, 
+                                             to=100,
+                                             orient='horizontal',
+                                             variable=self.processor.canny_threshold1,
+                                             command=lambda event: self.update_canny_threshold_value())
+        self.lowThresholdSlider.pack(fill='x', padx=10, pady=5)
 
-        # # Threshold 2
-        # threshold2_container = ttkb.Frame(self)
-        # threshold2_container.pack(fill="x", padx=10, pady=5)
+        # Threshold 2
+        threshold2_container = ttkb.Frame(self)
+        threshold2_container.pack(fill="x", padx=10, pady=5)
 
-        # ttkb.Label(threshold2_container, text="Threshold 2").pack(side="left")
-        # ttkb.Label(threshold2_container, textvariable=self.processor.canny_threshold2).pack(side="left", padx=(10, 0))
+        ttkb.Label(threshold2_container, text="Threshold 2").pack(side="left")
+        ttkb.Label(threshold2_container, textvariable=self.processor.canny_threshold2).pack(side="left", padx=(10, 0))
 
-        # self.highThresholdSlider = IntScale(self, 
-        #                                       from_=100, 
-        #                                       to=200,
-        #                                       orient='horizontal',
-        #                                       variable=self.processor.canny_threshold2,
-        #                                      command=lambda event: self.update_slider_value())
-        # self.highThresholdSlider.pack(fill='x', padx=10, pady=5)
+        self.highThresholdSlider = IntScale(self, 
+                                              from_=100, 
+                                              to=200,
+                                              orient='horizontal',
+                                              variable=self.processor.canny_threshold2,
+                                             command=lambda event: self.update_canny_threshold_value())
+        self.highThresholdSlider.pack(fill='x', padx=10, pady=5)
 
         # Area Number
         target_contour_area_container = ttkb.Frame(self)
@@ -86,6 +86,10 @@ class EdgeDetectionFrame(BaseFrame):
 
 
     # Slider Value Update Commands
+    def update_canny_threshold_value(self):
+        self.processor.process_image()
+        self.notify_observers()
+    
     def update_minimum_area_value(self):
         if (self.minContourAreaSlider.get() >= self.maxContourAreaSlider.get()):
             self.maxContourAreaSlider.set(self.minContourAreaSlider.get())
@@ -97,6 +101,7 @@ class EdgeDetectionFrame(BaseFrame):
             self.minContourAreaSlider.set(self.maxContourAreaSlider.get())
         self.processor.process_image()
         self.notify_observers()
+    
     
     
 

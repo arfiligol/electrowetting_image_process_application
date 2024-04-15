@@ -11,6 +11,7 @@ class ImageProcessor:
 
         # Attributes
         self.blurred = None 
+        self.gray_binary_img = None
         self.hsv = None
         self.mask = None
         self.edges = None
@@ -20,6 +21,10 @@ class ImageProcessor:
         # Parameters for Gaussian Blur
         self.gaussian_blur_ksize = IntVar(value=3)
         self.gaussian_blur_sigmaX = IntVar(value=0)
+
+        # Parameters for Gray to Binary ( Threshold)
+        self.gray_threshold1 = IntVar(value=0)
+        self.gray_threshold2 = IntVar(value=255)
 
         # Parameters for inRange (HSV Thresholding)
         self.lower_h = IntVar(value=0)
@@ -36,14 +41,17 @@ class ImageProcessor:
         # Parameter for Contour Filtering
         self.contour_area = DoubleVar()
         self.min_contour_area = IntVar(value=0)
-        self.max_contour_area = IntVar(value=(image_height * image_width / 10))
+        self.max_contour_area = IntVar(value=(image_height * image_width))
 
 
     
     # Processing Image
     def apply_gaussian_blur(self):
-        self.blurred = cv2.GaussianBlur(self.image, (self.gaussian_blur_ksize.get(), self.gaussian_blur_ksize.get()), self.gaussian_blur_sigmaX.get())
+        self.blurred = cv2.GaussianBlur(self.gray, (self.gaussian_blur_ksize.get(), self.gaussian_blur_ksize.get()), self.gaussian_blur_sigmaX.get())
     
+    def convert_to_gray(self):
+        self.gray = cv2.cvtColor(self.image, cv2.COLOR_BGR2GRAY)
+
     def convert_to_hsv(self):
         self.hsv = cv2.cvtColor(self.blurred, cv2.COLOR_BGR2HSV)
 
@@ -52,11 +60,15 @@ class ImageProcessor:
         upper_bound = np.array([self.upper_h.get(), self.upper_s.get(), self.upper_v.get()], dtype=np.uint8)
         self.mask = cv2.inRange(self.hsv, lower_bound, upper_bound)
 
+    def apply_gray_threshold(self):
+        ret, binary_im = cv2.threshold(self.blurred, self.gray_threshold1.get(), self.gray_threshold2.get(), cv2.THRESH_BINARY)
+        self.gray_binary_img = binary_im
+
     def apply_canny_edge_detection(self):
-        self.edges = cv2.Canny(self.mask, self.canny_threshold1.get(), self.canny_threshold2.get())
+        self.edges = cv2.Canny(self.gray_binary_img, self.canny_threshold1.get(), self.canny_threshold2.get())
 
     def find_and_filter_contours(self):
-        contours, _ = cv2.findContours(self.mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        contours, _ = cv2.findContours(self.edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
         max_filted = [c for c in contours if cv2.contourArea(c) <= self.max_contour_area.get()]
         min_filted = [c for c in max_filted if cv2.contourArea(c) >= self.min_contour_area.get()]
         self.contours = min_filted
@@ -134,9 +146,11 @@ class ImageProcessor:
                 
 
     def process_image(self):
+        self.convert_to_gray()
         self.apply_gaussian_blur()
-        self.convert_to_hsv()
-        self.apply_inrange_threshold()
+        self.apply_gray_threshold()
+        # self.convert_to_hsv()
+        # self.apply_inrange_threshold()
         self.apply_canny_edge_detection()
         self.find_and_filter_contours()
         self.draw_contours()
