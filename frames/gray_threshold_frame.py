@@ -1,5 +1,6 @@
 import ttkbootstrap as ttkb
 from ttkbootstrap.constants import *
+from tkinter import filedialog
 
 from .base_frame import BaseFrame
 from custom_widget import IntScale
@@ -13,6 +14,7 @@ class GrayThresholdFrame(BaseFrame):
     def __init__(self, parent, processor: "ImageProcessor", *args, **kwargs):
         self.processor = processor
         super().__init__(parent, "Gray Threshold", *args, **kwargs)
+
 
         # Threshold 1
         threshold1_container = ttkb.Frame(self)
@@ -43,6 +45,13 @@ class GrayThresholdFrame(BaseFrame):
                                               variable=self.processor.gray_threshold2,
                                              command=lambda event: self.update_gray_to_binary_threshold())
         self.threshold2Slider.pack(fill='x', padx=10, pady=5)
+    
+
+    def save_image(self):
+        file_path = filedialog.askopenfilename()
+        if file_path:
+            pass
+
 
     def update_gray_to_binary_threshold(self):
         self.processor.process_image()

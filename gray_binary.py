@@ -4,6 +4,7 @@ from PIL import Image, ImageTk
 import cv2
 from glob import glob
 import os
+import numpy as np
 
 class ImageApp:
     def __init__(self, master):
@@ -68,6 +69,20 @@ class ImageApp:
         ## Contour Filtering
         self.contour_area = DoubleVar()
 
+        # Vertical Line For Filtering Contour
+        Label(self.control_frame, text="Filtering Contour Vertical X:").pack()
+        self.vertical_x_vlaue = IntVar(value=(self.image_width // 2))
+        Scale(self.control_frame, from_=0, to_=self.image_width, variable=self.vertical_x_vlaue, orient="horizontal", command=self.update_image, length=self.image_width).pack()
+
+        # Adjusting Horizontal Line
+        Label(self.control_frame, text="Adjust Y Value:").pack()
+        self.adjust_y_value_amount = IntVar(value=0)
+        Scale(self.control_frame, from_=-300, to_=300, variable=self.adjust_y_value_amount, orient="horizontal", command=self.update_image, length=600).pack()
+
+        # Error of Fitting
+        self.ellipse_fitting_mse_label = Label(self.control_frame, text="Ellipse Fitting MSE Value: ")
+        self.ellipse_fitting_mse_label.pack()
+
         # Save and Next button
         self.save_button = Button(self.control_frame, text="Save and Next Image", command=self.save_image)
         self.save_button.pack()
@@ -96,6 +111,7 @@ class ImageApp:
         edge_detection_image = self.apply_canny_edge_detection(binary_image)
         contours = self.find_and_filter_contours(edge_detection_image)
         self.draw_contours(original_image, contours)
+        self.fit_ellipse_and_draw_it(original_image, contours)
         self.display_image(original_image, self.image_label)
         self.display_image(binary_image, self.processed_image_label)
         
@@ -127,6 +143,82 @@ class ImageApp:
     ## Draw Contours
     def draw_contours(self, img, contours):
         cv2.drawContours(img, contours, -1, (0, 255, 0), 2)
+
+    ## Fit Ellipse
+    def fit_ellipse_and_draw_it(self, img, contours):
+        if (len(contours) == 1):
+            print("Only one contour")
+            for cnt in contours:
+
+                # 獲取輪廓點的所有y值
+                y_values = [point[0][1] for point in cnt]
+
+                # 計算y值的直方圖
+                hist, bin_edges = np.histogram(y_values, bins=range(int(min(y_values)), int(max(y_values)) + 1))
+
+                # 找到最大頻率的y值，這將是最可能的平面邊緣的y值
+                c = bin_edges[np.argmax(hist)]
+                c += self.adjust_y_value_amount.get()
+                print("垂直線 x 值: " + str(self.vertical_x_vlaue.get()))
+                print("水平線 y 值: " + str(c))
+
+                # 繪製水平線與垂直線 (用於 filter contour)
+                cv2.line(img, (self.vertical_x_vlaue.get(), 0), (self.vertical_x_vlaue.get(), img.shape[0]), (255, 0, 0), 2)
+                cv2.line(img, (0, int(c)), (img.shape[1], int(c)), (255,0,0), 2)
+
+                # 濾掉水平線以下的點
+                filtered_contour = cnt[cnt[:, 0, 0] < self.vertical_x_vlaue.get()]
+                filtered_contour = filtered_contour[filtered_contour[:, 0, 1] < c]
+
+                # # 多項式擬和
+                # degree = 2
+                # coefficients = np.polyfit(filtered_contour[:, 0][:, 0], filtered_contour[:, 0][:, 1], degree)
+                # polynomial = np.poly1d(coefficients)
+
+                # x_fit = np.linspace(min(filtered_contour[:, 0][:, 0]), max(filtered_contour[:, 0][:, 0]), 400)
+                # y_fit = polynomial(x_fit)
+
+
+                # 橢圓擬和
+                ellipse = cv2.fitEllipse(filtered_contour)
+
+                # Extract the center, axis lengths, and rotation angle from the ellipse parameters.
+                (x0, y0), (MA, ma), angle = ellipse
+
+                # 生成橢圓上的點
+                ellipse_points = cv2.ellipse2Poly(
+                    (int(x0), int(y0)),           # 中心座標 (x0, y0)
+                    (int(MA) // 2, int(ma) // 2), # 長軸和短軸的長度 (MA, ma)
+                    int(angle),                   # 旋轉角度 angle
+                    0, 360, 1                     # 起始角度、結束角度、角度增量
+                )
+                
+                # 計算每個輪廓點到橢圓的最近距離
+                distances = [cv2.pointPolygonTest(ellipse_points, (int(pt[0][0]), int(pt[0][1])), True) for pt in filtered_contour]
+
+                # 計算均方誤差
+                mse = np.mean(np.square(distances))
+                self.ellipse_fitting_mse_label.config(text="Ellipse Fitting MSE Value: {:.4f}".format(mse))
+                print(f"Mean squared error of the fit: {mse}")
+
+                # 解橢圓方程找焦點
+                y_prime = (c - y0) * np.cos(angle) + (c - y0) * np.sin(angle)
+                x_prime = ma**2 * (1 - y_prime**2 / ma**2)**0.5
+                x = x0 + x_prime * np.cos(angle) - y_prime * np.sin(angle)
+
+                # 計算斜率
+                m = - (ma**2 * x_prime) / (MA**2 * y_prime)
+                print(f"斜率: {m}")
+
+                # 計算接觸角
+                contact_angle = np.degrees(np.arctan(m)) + angle # 修正旋轉角度回去
+                print(f"接觸角: {contact_angle}")
+
+                # 繪製 fit 橢圓 and most point 到 contour image 上
+                cv2.ellipse(img, ellipse, (0,0,255), 2)
+
+
+
 
     def display_image(self, img, label):
         img_pil = Image.fromarray(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))

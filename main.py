@@ -58,11 +58,22 @@ class ImageProcessingApp:
         # 初次呼叫讓圖片初始化
         BaseFrame.notify_observers()
 
+
+def resize_aspect_ratio(img, max_width, max_height):
+    height, width = img.shape[:2]
+    scale = min(max_width / width, max_height / height)
+    new_width = int(width * scale)
+    new_height = int(height * scale)
+    resized_img = cv2.resize(img, (new_width, new_height), interpolation=cv2.INTER_AREA)
+    return resized_img
+
+
 def main():
     window = ttkb.Window(themename="litera")
 
     # Create ImageProcessor Instance
-    image = cv2.imread("test_image4.jpg")
+    image = cv2.imread("data\\3mm -1\IMG20240410181435.jpg")
+    image = resize_aspect_ratio(image, 250, 250)  # 等比縮小到 250x250
     processor = ImageProcessor(image)
     processor.process_image()
 
