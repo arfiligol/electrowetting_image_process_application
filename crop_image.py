@@ -76,32 +76,32 @@ class ResizeImageFrame(Frame):
             self.original_image_label = tk.Label(self, image=self.resized_image)
         else:
             self.original_image_label = tk.Label(self, text="Unable to load image")
-        self.original_image_label.grid(row=0, column=0, padx=10)
+        self.original_image_label.pack()
         
         if self.cropped_image:
             self.cropped_image_label = tk.Label(self, image=self.cropped_image)
         else:
             self.cropped_image_label = tk.Label(self, text="Unable to perform image")
-        self.cropped_image_label.grid(row=0, column=2, padx=10)
+        self.cropped_image_label.pack()
 
     def create_sliders(self):
-        self.width_size_slider = Scale(self, from_=50, to=(self.original_image_width / 3), length=950, orient="horizontal", label="Crop Width Size")
-        self.width_size_slider.grid(row=1, column=1)
+        self.width_size_slider = Scale(self, from_=50, to=(self.original_image_width / 2), length=(self.original_image_width / 2 - 50), orient="horizontal", label="Crop Width Size")
+        self.width_size_slider.pack()
         self.width_size_slider.bind("<Motion>", self.update_crop)
 
-        self.height_size_slider = Scale(self, from_=50, to=(self.original_image_height / 3), length=950, orient="horizontal", label="Crop Height Size")
-        self.height_size_slider.grid(row=2, column=1)
+        self.height_size_slider = Scale(self, from_=50, to=(self.original_image_height / 2), length=(self.original_image_height / 2 - 50), orient="horizontal", label="Crop Height Size")
+        self.height_size_slider.pack()
         self.height_size_slider.bind("<Motion>", self.update_crop)
 
 
         self.x_slider = Scale(self, from_=0, to=self.original_image_width, length=500, orient="horizontal", label="Center X")
         self.x_slider.set(250)
-        self.x_slider.grid(row=3, column=1)
+        self.x_slider.pack()
         self.x_slider.bind("<Motion>", self.update_crop)
 
         self.y_slider = Scale(self, from_=0, to=self.original_image_height, length=500, orient="horizontal", label="Center Y")
         self.y_slider.set(250)
-        self.y_slider.grid(row=4, column=1)
+        self.y_slider.pack()
         self.y_slider.bind("<Motion>", self.update_crop)
 
     def update_crop(self, event):
@@ -122,7 +122,7 @@ class ResizeImageFrame(Frame):
 
     def create_save_button(self):
         save_button = Button(self, text="Save Cropped Image", command=self.save_cropped_image)
-        save_button.grid(row=4, column=1)
+        save_button.pack()
 
     def save_cropped_image(self):
         """Save the cropped image to disk with a modified filename."""
