@@ -20,10 +20,11 @@ def load_and_plot_data():
 
     # Unpack the list of tuples into two separate lists for plotting
     voltages, contact_angles = zip(*data)
+    contact_angles = [-angle for angle in contact_angles]
 
     # Plot the data using Matplotlib
     plt.figure()
-    plt.scatter(voltages, contact_angles, color='b', label='Contact Angle vs. Voltage')
+    plt.plot(voltages, contact_angles, color='b', label='Contact Angle vs. Voltage')
     plt.xlabel('Voltage (V)')
     plt.ylabel('Contact Angle (degrees)')
     plt.title('Contact Angle as a Function of Voltage')
