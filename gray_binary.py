@@ -69,7 +69,7 @@ class ImageApp:
         Label(self.control_frame, text="Gaussian Blur Kernel Size:").pack()
         self.gaussian_blur_ksize = IntVar(value=3)
         self.gaussian_blur_sigmaX = IntVar(value=0)
-        Scale(self.control_frame, from_=1, to_=21, variable=self.gaussian_blur_ksize, orient='horizontal', command=self.update_image, length=300).pack()
+        Scale(self.control_frame, from_=1, to_=51, variable=self.gaussian_blur_ksize, orient='horizontal', command=self.update_image, length=300).pack()
 
         # Contour Area
         Label(self.control_frame, text="Min Contour Area:").pack()
@@ -84,13 +84,13 @@ class ImageApp:
         self.contour_area = DoubleVar()
 
         # Vertical Line For Filtering Contour
-        Label(self.control_frame, text="Filtering Contour Vertical X1 (Smaller Value):").pack()
+        Label(self.control_frame, text="Adjust Filtering Contour Vertical X1 (Smaller Value):").pack()
         self.filtering_contour_x1_value = IntVar(value=(self.image_width // 2 - self.image_width // 4))
-        Scale(self.control_frame, from_=0, to_=self.image_width, variable=self.filtering_contour_x1_value, orient="horizontal", command=self.update_image, length=self.image_width).pack()
+        Scale(self.control_frame, from_=0, to_=(self.image_width // 2), variable=self.filtering_contour_x1_value, orient="horizontal", command=self.update_image, length=(self.image_width // 2)).pack()
 
-        Label(self.control_frame, text="Filtering Contour Vertical X2 (Bigger Value): ").pack()
+        Label(self.control_frame, text="Adjust Filtering Contour Vertical X2 (Bigger Value): ").pack()
         self.filtering_contour_x2_value = IntVar(value=(self.image_width // 2 + self.image_width // 4))
-        Scale(self.control_frame, from_=0, to_=self.image_width, variable=self.filtering_contour_x2_value, orient="horizontal", command=self.update_image, length=self.image_width).pack()
+        Scale(self.control_frame, from_=0, to_=(self.image_width // 2), variable=self.filtering_contour_x2_value, orient="horizontal", command=self.update_image, length=(self.image_width // 2)).pack()
 
 
         # Adjusting Horizontal Line
@@ -183,8 +183,9 @@ class ImageApp:
                 # 找到最左邊（x 最小）的點
                 min_x_point = min(cnt, key=lambda point: point[0][0])
                 # 將 filtering_contour_x1_value 設為最左邊的點的 x 值
-                self.filtering_contour_x1_value.set(min_x_point[0][0])
+                c_x1 = min_x_point[0][0] + self.filtering_contour_x1_value.get()
                 print(f"最左邊的 x 值: {min_x_point[0][0]}")
+                c_x2 = min_x_point[0][0] + 20 + self.filtering_contour_x2_value.get()
 
                 # 計算y值的直方圖
                 hist, bin_edges = np.histogram(y_values, bins=range(int(min(y_values)), int(max(y_values)) + 1))
@@ -193,16 +194,16 @@ class ImageApp:
                 c = bin_edges[np.argmax(hist)]
                 c1 = min_x_point[0][1] -20 - self.filtering_contour_y1_value.get()
                 c2 = min_x_point[0][1] - self.filtering_contour_y2_value.get()
-                print("垂直線 x1, x2 值: ({}, {})".format(self.filtering_contour_x1_value.get(), self.filtering_contour_x2_value.get()))
+                print("垂直線 x1, x2 值: ({}, {})".format(c_x1, c_x2))
                 print("水平線 c1, c2 值: ({}, {})".format(c1, c2))
 
                 # 繪製水平線與垂直線 (用於 filter contour)
-                cv2.line(img, (self.filtering_contour_x1_value.get(), 0), (self.filtering_contour_x1_value.get(), img.shape[0]), (0, 0, 255), 2)
-                cv2.line(img, (self.filtering_contour_x2_value.get(), 0), (self.filtering_contour_x2_value.get(), img.shape[0]), (0, 0, 255), 2)
+                cv2.line(img, (c_x1, 0), (c_x1, img.shape[0]), (0, 0, 255), 2)
+                cv2.line(img, (c_x2, 0), (c_x2, img.shape[0]), (0, 0, 255), 2)
                 cv2.line(img, (0, int(c1)), (img.shape[1], int(c1)), (0, 0, 255), 2)
                 cv2.line(img, (0, int(c2)), (img.shape[1], int(c2)), (0,0,255), 2)
                 # 濾掉邊界以外的點
-                filtered_contour = cnt[(cnt[:, 0, 0] >= min_x_point[0][0]) & (cnt[:, 0, 0] <= self.filtering_contour_x2_value.get())]
+                filtered_contour = cnt[(cnt[:, 0, 0] >= c_x1) & (cnt[:, 0, 0] <= c_x2)]
                 filtered_contour = filtered_contour[(filtered_contour[:, 0, 1] >= c1) & (filtered_contour[:, 0, 1] <= c2)]
 
                 # 確保 filtered_contour 有內容（邊界範圍正確）
@@ -245,6 +246,9 @@ class ImageApp:
                         self.current_contact_angle = contact_angle
                         print("Contact Angle: {:.5f}".format(m))
                         self.contact_angle_label.config(text="Contact Angle: {:.5f}".format(contact_angle))
+
+        else:
+            print(f"Get {len(contours)} contours.")
 
     def display_image(self, img, label):
         img_pil = Image.fromarray(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))

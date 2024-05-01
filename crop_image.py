@@ -35,15 +35,19 @@ class ResizeImageFrame(Frame):
         super().__init__(master, **kwargs)
         self.config(bg="black", bd=2, relief=tk.SUNKEN, width=300, height=300)
         self.image_files = self.master.image_files
+        self.image_files.sort()
         self.current_image_index = 0
         self.image = None # PIL ImageTk object
         self.resized_image = None # PIL ImageTk object for resized image
         self.cropped_image = None # PIL ImageTk object for cropped image
+
+        # Create a 
         self.load_next_image()
         self.load_image()
         self.create_widgets()
         self.create_sliders()
         self.create_save_button()
+        self.update_crop(None)
 
     def load_next_image(self):
         print("Loading next image...")
@@ -72,11 +76,11 @@ class ResizeImageFrame(Frame):
 
     def create_widgets(self):
         """ Create GUI widgets """
-        if self.resized_image:
-            self.original_image_label = tk.Label(self, image=self.resized_image)
-        else:
-            self.original_image_label = tk.Label(self, text="Unable to load image")
-        self.original_image_label.pack()
+        # if self.resized_image:
+        #     self.original_image_label = tk.Label(self, image=self.resized_image)
+        # else:
+        #     self.original_image_label = tk.Label(self, text="Unable to load image")
+        # self.original_image_label.pack()
         
         if self.cropped_image:
             self.cropped_image_label = tk.Label(self, image=self.cropped_image)
@@ -127,8 +131,16 @@ class ResizeImageFrame(Frame):
     def save_cropped_image(self):
         """Save the cropped image to disk with a modified filename."""
         if self.image_path and self.cropped_image:
-            file_path, ext = os.path.splitext(self.image_path)
-            save_path = f"{file_path}_cut{ext}"
+            file_directory = os.path.dirname(self.image_path)
+            new_folder_path = os.path.join(file_directory, "cut")
+            if not os.path.exists(new_folder_path):
+                os.makedirs(new_folder_path)
+            file_name, ext = os.path.splitext(os.path.basename(self.image_path))
+            new_filename = file_name + " - cut" + ext
+            print(f"New Path: {new_folder_path}")
+            print(f"New Filename: {new_filename}")
+            print(f"Extension: {ext}")
+            save_path = os.path.join(new_folder_path, new_filename)
             save_pil_image = self.original_image.crop((self.left, self.upper, self.right, self.lowerr))
             save_pil_image.save(save_path)
             print(f"Saved cropped image as {save_path}")

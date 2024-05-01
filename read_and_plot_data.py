@@ -3,7 +3,7 @@ from tkinter import filedialog
 import pickle
 import matplotlib.pyplot as plt
 
-def load_and_plot_data():
+def load_and_plot_data(title):
     # Set up the root window for the file dialog
     root = tk.Tk()
     root.withdraw()  # Hide the root window
@@ -20,17 +20,37 @@ def load_and_plot_data():
 
     # Unpack the list of tuples into two separate lists for plotting
     voltages, contact_angles = zip(*data)
-    contact_angles = [-angle for angle in contact_angles]
+    # 找到最大電壓的索引
+    max_voltage_index = voltages.index(max(voltages))
+
+    # 切分 voltages 和 contact_angles 為兩個部分
+    first_part_voltages = voltages[:max_voltage_index + 1]
+    second_part_voltages = voltages[max_voltage_index:]
+    first_part_contact_angles = contact_angles[:max_voltage_index + 1]
+    second_part_contact_angles = contact_angles[max_voltage_index:]
+
+    # 接觸角度取負號
+    first_part_contact_angles = [-angle for angle in first_part_contact_angles]
+    second_part_contact_angles = [-angle for angle in second_part_contact_angles]
+
+    # 合併兩部分資料
+    # first_part_data = list(zip(first_part_voltages, first_part_contact_angles))
+    # second_part_data = list(zip(second_part_voltages, second_part_contact_angles))
+
 
     # Plot the data using Matplotlib
     plt.figure()
-    plt.plot(voltages, contact_angles, color='b', label='Contact Angle vs. Voltage')
+    plt.plot(first_part_voltages, first_part_contact_angles, label='Adding Voltage')
+    plt.plot(second_part_voltages, second_part_contact_angles, label="Decresing Voltage")
     plt.xlabel('Voltage (V)')
     plt.ylabel('Contact Angle (degrees)')
-    plt.title('Contact Angle as a Function of Voltage')
+    plt.title(title)
     plt.legend()
     plt.grid(True)
     plt.show()
 
+#
+title = input("請輸入圖片標題: ")
+
 # Call the function to execute the file selection and plotting
-load_and_plot_data()
+load_and_plot_data(title)
