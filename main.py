@@ -38,11 +38,11 @@ class ImageProcessingApp:
         self.grayFrame: GrayThresholdFrame = GrayThresholdFrame(self.scroll_frame.scrollable_frame, self.processor)
         self.grayFrame.grid(row=1, column=1, padx=10, pady=10, sticky="nsew")
 
-        # self.hsvFrame = HSVFrame(self.scroll_frame.scrollable_frame, self.processor)
-        # self.hsvFrame.grid(row=1, column=0, padx=10, pady=10, sticky="nsew")
+        self.hsvFrame = HSVFrame(self.scroll_frame.scrollable_frame, self.processor)
+        self.hsvFrame.grid(row=1, column=0, padx=10, pady=10, sticky="nsew")
 
-        # self.hsvThresholdFrame: HSVThresholdFrame = HSVThresholdFrame(self.scroll_frame.scrollable_frame, self.processor)
-        # self.hsvThresholdFrame.grid(row = 1, column = 1, padx=10, pady=10, sticky="nsew")
+        self.hsvThresholdFrame: HSVThresholdFrame = HSVThresholdFrame(self.scroll_frame.scrollable_frame, self.processor)
+        self.hsvThresholdFrame.grid(row = 1, column = 1, padx=10, pady=10, sticky="nsew")
 
         self.cannyEdgeDetectionFrame: EdgeDetectionFrame = EdgeDetectionFrame(self.scroll_frame.scrollable_frame, self.processor)
         self.cannyEdgeDetectionFrame.grid(row=2, column=0, padx=10, pady=10, sticky="nsew")
@@ -50,9 +50,9 @@ class ImageProcessingApp:
         # 註冊 Frame 到 BaseFrame
         BaseFrame.register_observer(self.originFrame)
         BaseFrame.register_observer(self.gaussianFrame)
-        BaseFrame.register_observer(self.grayFrame)
-        # BaseFrame.register_observer(self.hsvFrame)
-        # BaseFrame.register_observer(self.hsvThresholdFrame)
+        # BaseFrame.register_observer(self.grayFrame)
+        BaseFrame.register_observer(self.hsvFrame)
+        BaseFrame.register_observer(self.hsvThresholdFrame)
         BaseFrame.register_observer(self.cannyEdgeDetectionFrame)
 
         # 初次呼叫讓圖片初始化
@@ -60,7 +60,7 @@ class ImageProcessingApp:
 
 
 def resize_aspect_ratio(img, max_width, max_height):
-    height, width = img.shape[:2]
+    height, width, image_channel = img.shape
     scale = min(max_width / width, max_height / height)
     new_width = int(width * scale)
     new_height = int(height * scale)
@@ -72,7 +72,7 @@ def main():
     window = ttkb.Window(themename="litera")
 
     # Create ImageProcessor Instance
-    image = cv2.imread("data\\3mm -1\IMG20240410181435.jpg")
+    image = cv2.imread("data/IMG_20240508_161314 - cut.jpg")
     image = resize_aspect_ratio(image, 250, 250)  # 等比縮小到 250x250
     processor = ImageProcessor(image)
     processor.process_image()

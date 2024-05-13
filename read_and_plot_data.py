@@ -34,7 +34,7 @@ def load_and_plot_data(title):
     second_part_contact_angles = [-angle for angle in second_part_contact_angles]
 
     # 合併兩部分資料
-    # first_part_data = list(zip(first_part_voltages, first_part_contact_angles))
+    # first_part_data = list(zip(first_part_voltages, first_part_contact_angles))ㄔㄣ
     # second_part_data = list(zip(second_part_voltages, second_part_contact_angles))
 
 
@@ -50,7 +50,7 @@ def load_and_plot_data(title):
     plt.show()
 
 #
-title = input("請輸入圖片標題: ")
+title = input("請輸入圖片標題")
 
 # Call the function to execute the file selection and plotting
 load_and_plot_data(title)

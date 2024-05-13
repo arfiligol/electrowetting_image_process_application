@@ -47,7 +47,7 @@ class ImageProcessor:
     
     # Processing Image
     def apply_gaussian_blur(self):
-        self.blurred = cv2.GaussianBlur(self.gray, (self.gaussian_blur_ksize.get(), self.gaussian_blur_ksize.get()), self.gaussian_blur_sigmaX.get())
+        self.blurred = cv2.GaussianBlur(self.image, (self.gaussian_blur_ksize.get(), self.gaussian_blur_ksize.get()), self.gaussian_blur_sigmaX.get())
     
     def convert_to_gray(self):
         self.gray = cv2.cvtColor(self.image, cv2.COLOR_BGR2GRAY)
@@ -65,7 +65,7 @@ class ImageProcessor:
         self.gray_binary_img = binary_im
 
     def apply_canny_edge_detection(self):
-        self.edges = cv2.Canny(self.gray_binary_img, self.canny_threshold1.get(), self.canny_threshold2.get())
+        self.edges = cv2.Canny(self.mask, self.canny_threshold1.get(), self.canny_threshold2.get())
 
     def find_and_filter_contours(self):
         contours, _ = cv2.findContours(self.edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
@@ -75,7 +75,7 @@ class ImageProcessor:
 
     def draw_contours(self):
         self.contour_img = self.image.copy()
-        cv2.drawContours(self.contour_img, self.contours, -1, (0, 255, 0), 2)
+        cv2.drawContours(self.contour_img, self.contours, -1, (0, 255, 0), 1)
     
     def get_information_of_contours(self):
         if (len(self.contours) > 1):
@@ -148,9 +148,9 @@ class ImageProcessor:
     def process_image(self):
         self.convert_to_gray()
         self.apply_gaussian_blur()
-        self.apply_gray_threshold()
-        # self.convert_to_hsv()
-        # self.apply_inrange_threshold()
+        # self.apply_gray_threshold()
+        self.convert_to_hsv()
+        self.apply_inrange_threshold()
         self.apply_canny_edge_detection()
         self.find_and_filter_contours()
         self.draw_contours()

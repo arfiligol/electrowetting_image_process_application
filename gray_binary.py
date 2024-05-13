@@ -169,7 +169,7 @@ class ImageApp:
 
     ## Draw Contours
     def draw_contours(self, img, contours):
-        cv2.drawContours(img, contours, -1, (0, 255, 0), 2)
+        cv2.drawContours(img, contours, -1, (0, 255, 0), 1)
 
     ## Fit Ellipse
     def fit_ellipse_and_draw_it(self, img, contours):
@@ -198,10 +198,10 @@ class ImageApp:
                 print("水平線 c1, c2 值: ({}, {})".format(c1, c2))
 
                 # 繪製水平線與垂直線 (用於 filter contour)
-                cv2.line(img, (c_x1, 0), (c_x1, img.shape[0]), (0, 0, 255), 2)
-                cv2.line(img, (c_x2, 0), (c_x2, img.shape[0]), (0, 0, 255), 2)
-                cv2.line(img, (0, int(c1)), (img.shape[1], int(c1)), (0, 0, 255), 2)
-                cv2.line(img, (0, int(c2)), (img.shape[1], int(c2)), (0,0,255), 2)
+                cv2.line(img, (c_x1, 0), (c_x1, img.shape[0]), (0, 0, 255), 1)
+                cv2.line(img, (c_x2, 0), (c_x2, img.shape[0]), (0, 0, 255), 1)
+                cv2.line(img, (0, int(c1)), (img.shape[1], int(c1)), (0, 0, 255), 1)
+                cv2.line(img, (0, int(c2)), (img.shape[1], int(c2)), (0,0,255), 1)
                 # 濾掉邊界以外的點
                 filtered_contour = cnt[(cnt[:, 0, 0] >= c_x1) & (cnt[:, 0, 0] <= c_x2)]
                 filtered_contour = filtered_contour[(filtered_contour[:, 0, 1] >= c1) & (filtered_contour[:, 0, 1] <= c2)]
@@ -221,7 +221,7 @@ class ImageApp:
                     y1 = int(y0 + t1 * vy)
                     x2 = int(x0 - t1 * vx)
                     y2 = int(y0 - t1 * vy)
-                    cv2.line(img, (x1, y1), (x2, y2), (255, 0, 0), 2)  # 藍色直線，線寬為 2
+                    cv2.line(img, (x1, y1), (x2, y2), (255, 0, 0), 1)  # 藍色直線，線寬為 2
 
                     # 計算斜率
                     m = vy / vx
