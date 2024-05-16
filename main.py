@@ -72,7 +72,7 @@ def main():
     window = ttkb.Window(themename="litera")
 
     # Create ImageProcessor Instance
-    image = cv2.imread("data/IMG_20240508_161314 - cut.jpg")
+    image = cv2.imread("data/4mm 60_ - 2/IMG20240508192908.jpg")
     image = resize_aspect_ratio(image, 250, 250)  # 等比縮小到 250x250
     processor = ImageProcessor(image)
     processor.process_image()

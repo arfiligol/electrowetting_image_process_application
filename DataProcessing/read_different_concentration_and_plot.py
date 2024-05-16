@@ -82,7 +82,7 @@ def plot_handtake_angle_and_voltage(voltages, angles_array, dataset_number, tota
                  fmt="s", label=f"Decreasing Voltage - Right Angles (Dataset {legend_tag})",
                  linestyle='-', capsize=3, color=cmap(color_index_decrease))
 
-# Load and process data for each dataset
+# Load and process data for each dataset (Handtake)
 datasets = ["4mm - Glycerin 20% - 2", "4mm - Glycerin 40% - 2"]
 for i, file_name in enumerate(datasets):
     volt_filename = f"data/txt/{file_name}.pkl"
@@ -97,6 +97,8 @@ for i, file_name in enumerate(datasets):
 
     legend_tag = file_name.split("Glycerin ")[1]
     plot_handtake_angle_and_voltage(c_vol, c_angle, i, len(datasets), legend_tag)
+
+# Load 
 
 # Show the plot
 plt.title(title)
