@@ -39,18 +39,31 @@ def load_and_plot_data(title):
 
 
     # Plot the data using Matplotlib
-    plt.figure()
-    plt.plot(first_part_voltages, first_part_contact_angles, label='Adding Voltage')
-    plt.plot(second_part_voltages, second_part_contact_angles, label="Decresing Voltage")
+    # Set font sizes in the chart
+    plt.rcParams['font.size'] = 16
+    plt.rcParams['axes.labelsize'] = 16
+    plt.rcParams['axes.titlesize'] = 18
+    plt.rcParams['xtick.labelsize'] = 14
+    plt.rcParams['ytick.labelsize'] = 14
+    plt.rcParams['legend.fontsize'] = 12
+
+    plt.figure(figsize=(11, 7))
+
+    plt.plot(first_part_voltages, first_part_contact_angles, marker = "o", linestyle = "--", label='Adding Voltage')
+    plt.plot(second_part_voltages, second_part_contact_angles, marker = "^", linestyle = "--", label="Decresing Voltage")
+    
     plt.xlabel('Voltage (V)')
     plt.ylabel('Contact Angle (degrees)')
     plt.title(title)
     plt.legend()
     plt.grid(True)
+    
+
+
     plt.show()
 
 #
-title = input("請輸入圖片標題")
+title = input("請輸入圖片標題: ")
 
 # Call the function to execute the file selection and plotting
 load_and_plot_data(title)
