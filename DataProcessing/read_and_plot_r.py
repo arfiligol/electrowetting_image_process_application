@@ -23,7 +23,7 @@ def calculate_R(data):
     # Calculate R
     R = (theta_end - theta_max) / (theta_0 - theta_max)
     
-    return R
+    return R, theta_0, theta_max, theta_end
 
 def extract_percentage(filename):
     match = re.search(r'(\d+)%', filename)
@@ -69,34 +69,39 @@ def main(title):
     
 
     # Start Processing the Data
-    percentages = []
+    viscosity_file_path = filedialog.askopenfilename(title="選擇 viscosity 的 pkl 檔案路徑", filetypes=[("Pickle files", "*.pkl")])
+    if viscosity_file_path:
+        # Get the viscosity
+        with open(viscosity_file_path, "rb") as viscosity_file:
+            viscosities = pickle.load(viscosity_file)
+    else:
+        print("Quit: User didn't choose a viscosity file.")
     Rs = []
     for key, value in data_dict.items():
-        R = calculate_R(value)
-        print(f"Key: {extract_percentage(key)}, R: {R}")
+        R, theta_0, theta_max, theta_end = calculate_R(value)
+        print(f"Key: {extract_percentage(key)}, R: {R}, Initial: {theta_0}, Max: {theta_max}, End: {theta_end}")
         
         # Use the percentage of concentration to be x axis
-        percentages.append(extract_percentage(key))
         Rs.append(R)
 
 
     # Plot the diagram
     # Set rcParams (need to be set before plot since they are global variables)
-    plt.rcParams['font.size'] = 16
-    plt.rcParams['axes.labelsize'] = 16
-    plt.rcParams['axes.titlesize'] = 18
-    plt.rcParams['xtick.labelsize'] = 14
-    plt.rcParams['ytick.labelsize'] = 14
-    plt.rcParams['legend.fontsize'] = 12
+    plt.rcParams['font.size'] = 32
+    plt.rcParams['axes.labelsize'] = 32
+    plt.rcParams['axes.titlesize'] = 36
+    plt.rcParams['xtick.labelsize'] = 24
+    plt.rcParams['ytick.labelsize'] = 24
+    plt.rcParams['legend.fontsize'] = 24
 
     # Figure
     plt.figure(figsize=(12, 8))
     
-    plt.plot(percentages, Rs, marker = "o", linestyle = "--")
+    plt.plot(viscosities, Rs, marker = "o", markersize = 18, linestyle = "--", linewidth = 5)
 
     # Attribute of the figure
     plt.title(title)
-    plt.xlabel("Weight Percentage")
+    plt.xlabel("Viscosity (mPa * s)")
     plt.ylabel("R Value")
     plt.grid(True)
 

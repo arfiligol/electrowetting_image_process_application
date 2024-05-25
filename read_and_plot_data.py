@@ -39,18 +39,19 @@ def load_and_plot_data(title):
 
 
     # Plot the data using Matplotlib
-    # Set font sizes in the chart
-    plt.rcParams['font.size'] = 16
-    plt.rcParams['axes.labelsize'] = 16
-    plt.rcParams['axes.titlesize'] = 18
-    plt.rcParams['xtick.labelsize'] = 14
-    plt.rcParams['ytick.labelsize'] = 14
-    plt.rcParams['legend.fontsize'] = 12
+    # Set rcParams (need to be set before plot since they are global variables)
+    plt.rcParams['font.size'] = 30
+    plt.rcParams['axes.labelsize'] = 30
+    plt.rcParams['axes.titlesize'] = 34
+    plt.rcParams['xtick.labelsize'] = 22
+    plt.rcParams['ytick.labelsize'] = 22
+    plt.rcParams['legend.fontsize'] = 24
 
-    plt.figure(figsize=(11, 7))
 
-    plt.plot(first_part_voltages, first_part_contact_angles, marker = "o", linestyle = "--", label='Adding Voltage')
-    plt.plot(second_part_voltages, second_part_contact_angles, marker = "^", linestyle = "--", label="Decresing Voltage")
+    plt.figure(figsize=(11, 8))
+
+    plt.plot(first_part_voltages, first_part_contact_angles, marker = "o", markersize = 15, linestyle = "--", linewidth = 5, label='Adding Voltage')
+    plt.plot(second_part_voltages, second_part_contact_angles, marker = "^", markersize = 15, linestyle = "--", linewidth = 5, label="Decresing Voltage")
     
     plt.xlabel('Voltage (V)')
     plt.ylabel('Contact Angle (degrees)')

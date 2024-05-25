@@ -48,12 +48,12 @@ def plot_handtake_angle_and_voltage(voltages, angles_array, dataset_number, tota
 
     # Plotting
     # Set font sizes in the chart
-    plt.rcParams['font.size'] = 16
-    plt.rcParams['axes.labelsize'] = 16
-    plt.rcParams['axes.titlesize'] = 18
-    plt.rcParams['xtick.labelsize'] = 14
-    plt.rcParams['ytick.labelsize'] = 14
-    plt.rcParams['legend.fontsize'] = 12
+    plt.rcParams['font.size'] = 32
+    plt.rcParams['axes.labelsize'] = 32
+    plt.rcParams['axes.titlesize'] = 36
+    plt.rcParams['xtick.labelsize'] = 28
+    plt.rcParams['ytick.labelsize'] = 28
+    plt.rcParams['legend.fontsize'] = 24
 
     # Define the color map and select colors based on the dataset number
     cmap = plt.cm.get_cmap('viridis', total_datasets * 2)  # More colors if there are more datasets
